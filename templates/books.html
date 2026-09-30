@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách sách - LibraryMS{% endblock %}
+
+{% block content %}
+    <h1>Danh sách sách</h1>
+
+    <!-- Thanh liên kết theo thể loại -->
+    <div class="filter-bar">
+        <strong>Lọc thể loại:</strong>
+        <a href="{{ url_for('books_list') }}" class="{% if not selected_category %}active-filter{% endif %}">Tất cả</a>
+        {% for cat in categories %}
+            | <a href="{{ url_for('books_list', category=cat) }}" 
+                 class="{% if selected_category == cat %}active-filter{% endif %}">{{ cat }}</a>
+        {% endfor %}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên sách</th>
+                <th>Tác giả</th>
+                <th>Thể loại</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.id }}</td>
+                <td>
+                    <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
+                </td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.category }}</td>
+                <td>
+                    {% if book.available %}
+                        <span style="color: green;">Sẵn sàng</span>
+                    {% else %}
+                        <span style="color: red;">Đã mượn</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">Không tìm thấy sách phù hợp.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

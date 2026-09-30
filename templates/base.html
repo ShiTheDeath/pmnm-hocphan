@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}LibraryMS{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        nav { background: #f4f4f4; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .filter-bar { margin-bottom: 15px; background: #eef; padding: 10px; border-radius: 5px; }
+        .filter-bar a { margin-right: 10px; text-decoration: none; }
+        .active-filter { font-weight: bold; text-decoration: underline; color: red; }
+    </style>
+</head>
+<body>
+    <!-- Menu chung cho toàn bộ các trang (bao gồm cả trang 404) -->
+    <nav>
+        <a href="{{ url_for('index') }}">Trang chủ</a> | 
+        <a href="{{ url_for('books_list') }}">Danh sách sách</a>
+    </nav>
+
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
