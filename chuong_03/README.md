@@ -131,25 +131,7 @@ Date: Wed, 07 Oct 2026 14:12:46 GMT
 Content-Type: text/html; charset=utf-8
 Content-Length: 449
 Connection: close
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Lỗi 405 - Sổ điểm</title>
-</head>
-<body>
-    <nav>
-        <a href="/">Trang chủ</a> ·
-        <a href="/students">Sinh viên</a> ·
-        <a href="/search">Tìm kiếm</a>
-    </nav>
-    <hr>
-    <h1>Lỗi 405</h1>
-    <p><strong>Phương thức không được hỗ trợ</strong></p><p>The method is not allowed for the requested URL.</p>
-</body>
-</html>
-
+Trả về HTML
 ## 3. Trả lời câu hỏi ngắn
 1. **Vì sao Câu 4 dùng 301 còn Câu 8 trả 201 kèm Location?**
    - **Câu 4** sử dụng mã trạng thái `301 Moved Permanently` vì URL `/sv/<mssv>` đóng vai trò là một liên kết rút gọn cố định, giúp chuyển hướng vĩnh viễn trình duyệt/client sang URL chuẩn `/students/<mssv>`.
