@@ -230,5 +230,95 @@ def search_students():
     res_html += "</ul>"
     return layout("Tìm kiếm sinh viên", form_html + res_html)
 
+#Câu 7
+@app.route("/api/students", methods=["GET"])
+def api_students():
+    lop_filter = request.args.get("lop")
+    min_avg_raw = request.args.get("min_avg")
+    
+    min_avg = None
+    if min_avg_raw is not None:
+        try:
+            min_avg = float(min_avg_raw)
+        except ValueError:
+            abort(400, description="Tham số min_avg phải là một số thực hợp lệ.")
+            
+    result = []
+    for mssv in STUDENTS:
+        summary = student_summary(mssv)
+        #Lọc theo lớp (không phân biệt hoa thường)
+        if lop_filter and summary["lop"].lower() != lop_filter.lower():
+            continue    
+        # Lọc theo min_avg (bỏ qua sinh viên chưa có điểm)
+        if min_avg is not None:
+            if summary["average"] is None or summary["average"] < min_avg:
+                continue
+                
+        result.append(summary)
+        
+    return jsonify(result)
+
+@app.route("/api/students/<mssv>", methods=["GET"])
+def api_student_detail(mssv):
+    if mssv not in STUDENTS:
+        abort(404, description=f"Không có sinh viên với MSSV = {mssv}.") #
+    return jsonify(student_summary(mssv))
+
+#Câu 8
+@app.route("/api/students/<mssv>/scores/<course>", methods=["GET", "PUT", "DELETE", "POST"])
+def api_student_course_score(mssv, course):
+    if request.method == "POST":
+        abort(405, description="Phương thức POST không được hỗ trợ tại URL này.") #
+        
+    if mssv not in STUDENTS:
+        abort(404, description=f"Không có sinh viên với MSSV = {mssv}.") #
+        
+    course_upper = course.upper() # Luôn lưu dạng chữ hoa
+    scores = STUDENTS[mssv]["scores"]
+    
+    if request.method == "GET":
+        if course_upper not in scores:
+            abort(404, description=f"Học phần {course_upper} chưa có điểm.") 
+        return jsonify({"mssv": mssv, "course": course_upper, "score": scores[course_upper]})
+        
+    elif request.method == "PUT":
+        score_raw = request.args.get("score")
+        if score_raw is None:
+            abort(400, description="Thiếu tham số score.") 
+            
+        try:
+            score_val = float(score_raw)
+        except ValueError:
+            abort(400, description="Tham số score phải là số.") 
+            
+        if not (0.0 <= score_val <= 10.0):
+            abort(400, description="Điểm phải nằm trong khoảng [0, 10].") 
+            
+        existed = course_upper in scores
+        scores[course_upper] = score_val # Thêm hoặc sửa điểm
+        
+        updated_summary = student_summary(mssv)
+        res_data = {
+            "mssv": mssv,
+            "course": course_upper,
+            "score": score_val,
+            "average": updated_summary["average"]
+        }
+        
+        if not existed:
+            # Thêm mới: trả về 201 kèm header Location
+            res = jsonify(res_data)
+            res.status_code = 201
+            res.headers["Location"] = url_for("api_student_course_score", mssv=mssv, course=course_upper) #
+            return res
+        else:
+            # Sửa điểm: trả về 200
+            return jsonify(res_data), 200
+            
+    elif request.method == "DELETE":
+        if course_upper not in scores:
+            abort(404, description=f"Học phần {course_upper} chưa có điểm.") 
+        del scores[course_upper]
+        return "", 204 # Trả về 204 body rỗng
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
