@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_macros.html" import item_card, pagination %}
+
+{% block title %}Thực đơn (Trang {{ page }}) - Cà phê Sông Hương{% endblock %}
+
+{% block content %}
+    <h2>Menu quán (Trang {{ page }}/{{ pages }})</h2>
+
+    {% if items %}
+        <div class="menu-grid">
+            {% for item in items %}
+                {{ item_card(item) }}
+            {% endfor %}
+        </div>
+
+        {{ pagination(page, pages, 'menu') }}
+    {% else %}
+        <p>Chưa có món nào.</p>
+    {% endif %}
+{% endblock %}

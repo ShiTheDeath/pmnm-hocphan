@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Trang chủ - {{ shop.name }}{% endblock %}
+{% block content %}
+    <h1>Welcome to {{ shop.name }}</h1>
+    <p><strong>Địa chỉ:</strong> {{ shop.address }}</p>
+    <p><strong>Giờ mở cửa:</strong> {{ shop.open }}h - {{ shop.close }}h</p>
+
+    {% if is_open %}
+        <p style="color: green; font-weight: bold;">Bây giờ là {{ hour }}h, quán đang mở cửa!</p>
+    {% else %}
+        <p style="color: red; font-weight: bold;">Bây giờ là {{ hour }}h, quán đang đóng cửa!</p>
+    {% endif %}
+
+    <h2>Khuyến mãi</h2>
+    <ul>
+        {% for promotion in promotions %}
+            <li>{{ promotion }}</li>
+        {% else %}
+            <li>Không có khuyến mãi nào.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
