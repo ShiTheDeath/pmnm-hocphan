@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính điểm học phần</title>
+    <!-- Phông chữ Inter hiện đại -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --error-color: #dc2626;
+            --error-bg: #fef2f2;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --success-text: #166534;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: lightblue;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 420px;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .card-header p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s ease;
+            background-color: #fff;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.15);
+        }
+
+        input.is-invalid {
+            border-color: var(--error-color);
+            background-color: var(--error-bg);
+        }
+
+        input.is-invalid:focus {
+            box-shadow: 0 0 0 3.5px rgba(220, 38, 38, 0.15);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.825rem;
+            margin-top: 6px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        .result-card {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--success-text);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Tính Điểm Học Phần</h2>
+            <p>Trọng số: CC (10%) • GK (30%) • CK (60%)</p>
+        </div>
+        
+        <form action="" method="POST">
+            <!-- Chuyên cần -->
+            <div class="form-group">
+                <label for="cc">Điểm chuyên cần (10%)</label>
+                <input type="text" id="cc" name="cc" value="{{ cc }}" placeholder="Ví dụ: 8,5" class="{% if errors.get('cc') %}is-invalid{% endif %}">
+                {% if errors.get('cc') %}
+                    <div class="error-message"> {{ errors['cc'] }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Giữa kỳ -->
+            <div class="form-group">
+                <label for="gk">Điểm giữa kỳ (30%)</label>
+                <input type="text" id="gk" name="gk" value="{{ gk }}" placeholder="Ví dụ: 7,0" class="{% if errors.get('gk') %}is-invalid{% endif %}">
+                {% if errors.get('gk') %}
+                    <div class="error-message">{{ errors['gk'] }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Cuối kỳ -->
+            <div class="form-group">
+                <label for="ck">Điểm cuối kỳ (60%)</label>
+                <input type="text" id="ck" name="ck" value="{{ ck }}" placeholder="Ví dụ: 9,0" class="{% if errors.get('ck') %}is-invalid{% endif %}">
+                {% if errors.get('ck') %}
+                    <div class="error-message"> {{ errors['ck'] }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit">Tính Điểm</button>
+        </form>
+
+        {% if result %}
+            <div class="result-card">
+                <div class="result-label">Kết quả học phần</div>
+                <div class="result-value">{{ result }}</div>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

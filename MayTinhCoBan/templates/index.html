@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Máy tính cơ bản</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], select { padding: 8px; width: 280px; box-sizing: border-box; }
+        .error { color: #d9534f; font-size: 0.88em; margin-top: 4px; }
+        .result { margin-top: 20px; font-size: 1.2em; font-weight: bold; color: #2e7d32; }
+        button { padding: 10px 24px; cursor: pointer; font-size: 1em; }
+    </style>
+</head>
+<body>
+    <h2>Bài 1. Máy tính cơ bản</h2>
+    
+    <form action="" method="POST">
+        <!-- Ô nhập số thứ nhất a -->
+        <div class="form-group">
+            <label for="a">Số thứ nhất (a):</label>
+            <input type="text" id="a" name="a" value="{{ a }}">
+            {% if error_a %}
+                <div class="error">{{ error_a }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Phép toán op (+ - * /) -->
+        <div class="form-group">
+            <label for="op">Phép toán (op):</label>
+            <select id="op" name="op">
+                <option value="+" {% if op == '+' %}selected{% endif %}>+</option>
+                <option value="-" {% if op == '-' %}selected{% endif %}>-</option>
+                <option value="*" {% if op == '*' %}selected{% endif %}>*</option>
+                <option value="/" {% if op == '/' %}selected{% endif %}>/</option>
+            </select>
+            {% if error_op %}
+                <div class="error">{{ error_op }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Ô nhập số thứ hai b -->
+        <div class="form-group">
+            <label for="b">Số thứ hai (b):</label>
+            <input type="text" id="b" name="b" value="{{ b }}">
+            {% if error_b %}
+                <div class="error">{{ error_b }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit">Tính toán</button>
+    </form>
+
+    {% if result %}
+        <div class="result">
+            Kết quả: {{ result }}
+        </div>
+    {% endif %}
+</body>
+</html>
