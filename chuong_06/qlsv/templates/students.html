@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Trang Chủ - Quản Lý Sinh Viên{% endblock %}
+
+{% block content %}
+<h2>HỆ THỐNG QUẢN LÝ SINH VIÊN</h2>
+
+<!-- Thống kê tổng quan -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="title">Tổng sinh viên</div>
+        <div class="value">{{ count }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="title">GPA Trung Bình</div>
+        <div class="value">{{ "%.2f"|format(avg_gpa) if avg_gpa else 0 }}</div>
+    </div>
+</div>
+
+<!-- Bảng danh sách sinh viên -->
+{% if students %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>MSSV</th>
+            <th>Họ và Tên</th>
+            <th>Điểm GPA</th>
+            <th>Xếp Loại</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.id }}</td>
+            <td><strong>{{ student.mssv }}</strong></td>
+            <td>{{ student.name }}</td>
+            <td><strong>{{ "%.2f"|format(student.gpa) }}</strong></td>
+            <td>
+                {% if student.gpa >= 8.5 %}
+                    <span class="badge badge-excellent">Xuất sắc</span>
+                {% elif student.gpa >= 8.0 %}
+                    <span class="badge badge-excellent">Giỏi</span>
+                {% elif student.gpa >= 6.5 %}
+                    <span class="badge badge-good">Khá</span>
+                {% elif student.gpa >= 5.0 %}
+                    <span class="badge badge-average">Trung bình</span>
+                {% else %}
+                    <span class="badge badge-weak">Yếu</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>Chưa có dữ liệu sinh viên trong hệ thống.</p>
+{% endif %}
+
+<!-- Các đường dẫn nhanh -->
+<div class="nav-links">
+    <a href="/them-mau" class="btn">+ Thêm dữ liệu mẫu</a>
+    <a href="/thu-truy-van" class="btn btn-outline">Xem báo cáo truy vấn </a>
+</div>
+{% endblock %}

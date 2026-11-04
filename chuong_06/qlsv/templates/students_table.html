@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Danh sách sinh viên dạng bảng{% endblock %}
+
+{% block content %}
+<h2>BẢNG DANH SÁCH SINH VIÊN</h2>
+
+{% if students %}
+<table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th>ID</th>
+            <th>MSSV</th>
+            <th>Họ và Tên</th>
+            <th>Điểm GPA</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.id }}</td>
+            <td>{{ student.mssv }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.gpa }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 20px; background-color: #f9f9f9; padding: 10px; border-radius: 5px;">
+    <p><strong>Tổng số sinh viên:</strong> {{ count }}</p>
+    <p><strong>Điểm trung bình toàn khóa:</strong> {{ "%.2f"|format(avg_gpa) if avg_gpa else 0 }}</p>
+</div>
+{% else %}
+    <p>Chưa có dữ liệu sinh viên. Vui lòng mở <a href="/them-mau">/them-mau</a> để tạo dữ liệu trước.</p>
+{% endif %}
+
+<p style="margin-top: 15px;"><a href="/">← Quay lại trang chủ</a></p>
+{% endblock %}
