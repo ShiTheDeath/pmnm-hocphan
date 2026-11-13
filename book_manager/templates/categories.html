@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Danh mục sách{% endblock %}
+{% block content %}
+<h1>Danh mục sách</h1>
+<div class="card">
+  <form class="bar" method="get">
+    <input name="q" value="{{ q }}" placeholder="Tìm danh mục...">
+    <button class="btn sec">Tìm</button>
+    <span class="sp"></span>
+    <a class="btn" href="{{ url_for('category_new') }}">+ Thêm danh mục</a>
+  </form>
+  <table>
+    <tr><th>#</th><th>Tên danh mục</th><th>Mô tả</th><th class="num">Số sách</th><th class="num">Thao tác</th></tr>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.id }}</td>
+      <td><a href="{{ url_for('books', category_id=r.id) }}"><strong>{{ r.name }}</strong></a></td>
+      <td class="muted">{{ r.description }}</td>
+      <td class="num"><span class="badge">{{ r.n_book }}</span></td>
+      <td class="num">
+        <a class="btn sm sec" href="{{ url_for('books', category_id=r.id) }}">Xem sách</a>
+        <a class="btn sm" href="{{ url_for('category_edit', cid=r.id) }}">Sửa</a>
+        <form class="inline" method="post" action="{{ url_for('category_delete', cid=r.id) }}"
+              onsubmit="return confirm('Xóa danh mục &quot;{{ r.name }}&quot;? {{ r.n_book }} sách thuộc danh mục cũng sẽ bị xóa.')">
+          <button class="btn sm del">Xóa</button></form>
+      </td>
+    </tr>
+    {% else %}<tr><td colspan="5" class="muted">Chưa có danh mục nào.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

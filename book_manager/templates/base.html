@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Quản lý sách{% endblock %}</title>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;
+        --brand:#2563eb;--brand-d:#1d4ed8;--ok:#16a34a;--err:#dc2626;--warn:#d97706}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:#111827;color:#fff}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  header .wrap{display:flex;align-items:center;gap:24px;height:56px}
+  header .logo{font-weight:700;font-size:18px}
+  header a{color:#cbd5e1;text-decoration:none;padding:6px 10px;border-radius:6px}
+  header a:hover,header a.active{background:#1f2937;color:#fff}
+  main{padding:24px 0 48px}
+  h1{font-size:22px;margin:0 0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .grid{display:grid;gap:16px}
+  .stats{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:16px}
+  .stat .n{font-size:28px;font-weight:700}
+  .stat .l{color:var(--muted);font-size:13px}
+  .two{grid-template-columns:2fr 1fr}
+  @media(max-width:800px){.two{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+  td.num,th.num{text-align:right}
+  .btn{display:inline-block;border:0;background:var(--brand);color:#fff;padding:8px 14px;border-radius:7px;
+       cursor:pointer;font-size:14px;text-decoration:none}
+  .btn:hover{background:var(--brand-d)}
+  .btn.sec{background:#e5e7eb;color:var(--ink)} .btn.sec:hover{background:#d1d5db}
+  .btn.del{background:var(--err)} .btn.del:hover{background:#b91c1c}
+  .btn.sm{padding:4px 9px;font-size:13px}
+  .bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+  .bar .sp{flex:1}
+  input,select,textarea{font:inherit;padding:8px 10px;border:1px solid #d1d5db;border-radius:7px;width:100%;background:#fff}
+  .bar input,.bar select{width:auto}
+  label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+  .flash{padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+  .flash.ok{background:#dcfce7;color:#166534} .flash.error{background:#fee2e2;color:#991b1b}
+  .muted{color:var(--muted)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;background:#e0e7ff;color:#3730a3}
+  .badge.warn{background:#fef3c7;color:#92400e} .badge.out{background:#fee2e2;color:#991b1b}
+  .hbar{height:10px;background:#e5e7eb;border-radius:99px;overflow:hidden}
+  .hbar>i{display:block;height:100%;background:var(--brand)}
+  form.inline{display:inline}
+  .form{max-width:560px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="logo">📚 Quản lý sách</span>
+  <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">Dashboard</a>
+  <a href="{{ url_for('categories') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('categor') }}">Danh mục</a>
+  <a href="{{ url_for('books') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('book') }}">Sách</a>
+</div></header>
+<main><div class="wrap">
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in msgs %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</div></main>
+</body>
+</html>

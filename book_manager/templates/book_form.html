@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Sách{% endblock %}
+{% block content %}
+<h1>Sách{% if current %} – danh mục: {{ current.name }}{% endif %}</h1>
+<div class="card">
+  <form class="bar" method="get">
+    <select name="category_id" onchange="this.form.submit()">
+      <option value="">Tất cả danh mục</option>
+      {% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if c.id==cat_id }}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <input name="q" value="{{ q }}" placeholder="Tìm theo tên sách / tác giả...">
+    <button class="btn sec">Tìm</button>
+    <span class="sp"></span>
+    <a class="btn" href="{{ url_for('book_new', category_id=cat_id) }}">+ Thêm sách</a>
+  </form>
+  <table>
+    <tr><th>#</th><th>Tên sách</th><th>Tác giả</th><th>Danh mục</th><th class="num">Năm</th>
+        <th class="num">Giá</th><th class="num">SL</th><th class="num">Thao tác</th></tr>
+    {% for b in rows %}
+    <tr>
+      <td>{{ b.id }}</td><td><strong>{{ b.title }}</strong></td><td>{{ b.author }}</td>
+      <td><span class="badge">{{ b.cat_name }}</span></td>
+      <td class="num">{{ b.year or '' }}</td>
+      <td class="num">{{ b.price|vnd }}</td>
+      <td class="num">{% if b.quantity==0 %}<span class="badge out">Hết</span>{% elif b.quantity<=5 %}<span class="badge warn">{{ b.quantity }}</span>{% else %}{{ b.quantity }}{% endif %}</td>
+      <td class="num">
+        <a class="btn sm" href="{{ url_for('book_edit', bid=b.id) }}">Sửa</a>
+        <form class="inline" method="post" action="{{ url_for('book_delete', bid=b.id) }}"
+              onsubmit="return confirm('Xóa sách &quot;{{ b.title }}&quot;?')">
+          <button class="btn sm del">Xóa</button></form>
+      </td>
+    </tr>
+    {% else %}<tr><td colspan="8" class="muted">Không có sách nào.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

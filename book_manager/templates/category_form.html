@@ -1,0 +1,17 @@
+    {% extends "base.html" %}
+{% block title %}{{ 'Sửa' if editing else 'Thêm' }} danh mục{% endblock %}
+{% block content %}
+<h1>{{ 'Sửa danh mục' if editing else 'Thêm danh mục' }}</h1>
+<div class="card form">
+  <form method="post">
+    <label for="name">Tên danh mục *</label>
+    <input id="name" name="name" required maxlength="100" value="{{ row.get('name','') }}">
+    <label for="description">Mô tả</label>
+    <textarea id="description" name="description" rows="3">{{ row.get('description','') }}</textarea>
+    <div class="bar" style="margin-top:16px">
+      <button class="btn">Lưu</button>
+      <a class="btn sec" href="{{ url_for('categories') }}">Hủy</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

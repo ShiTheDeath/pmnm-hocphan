@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="grid stats">
+  <div class="card stat"><div class="n">{{ totals.n_cat }}</div><div class="l">Danh mục</div></div>
+  <div class="card stat"><div class="n">{{ totals.n_book }}</div><div class="l">Đầu sách</div></div>
+  <div class="card stat"><div class="n">{{ totals.n_qty }}</div><div class="l">Tổng số lượng tồn</div></div>
+  <div class="card stat"><div class="n">{{ totals.stock_value|vnd }}</div><div class="l">Giá trị tồn kho</div></div>
+</div>
+
+<div class="grid two">
+  <div class="card">
+    <div class="bar"><strong>Sách theo danh mục</strong><span class="sp"></span>
+      <a class="btn sm" href="{{ url_for('category_new') }}">+ Danh mục</a>
+      <a class="btn sm" href="{{ url_for('book_new') }}">+ Sách</a></div>
+    <table>
+      <tr><th>Danh mục</th><th style="width:30%">Tỷ lệ</th><th class="num">Số đầu sách</th><th class="num">Tồn</th><th class="num">Giá trị</th></tr>
+      {% for r in per_cat %}
+      <tr>
+        <td><a href="{{ url_for('books', category_id=r.id) }}">{{ r.name }}</a></td>
+        <td><div class="hbar"><i style="width:{{ (r.n_book / max_book * 100)|round|int }}%"></i></div></td>
+        <td class="num">{{ r.n_book }}</td><td class="num">{{ r.n_qty }}</td><td class="num">{{ r.value|vnd }}</td>
+      </tr>
+      {% else %}<tr><td colspan="5" class="muted">Chưa có danh mục.</td></tr>{% endfor %}
+    </table>
+  </div>
+
+  <div class="grid" style="align-content:start">
+    <div class="card">
+      <strong>Sắp hết hàng (≤ 5)</strong>
+      <table>
+        {% for b in low_stock %}
+        <tr><td><a href="{{ url_for('book_edit', bid=b.id) }}">{{ b.title }}</a>
+            <div class="muted" style="font-size:12px">{{ b.cat_name }}</div></td>
+          <td class="num"><span class="badge {{ 'out' if b.quantity==0 else 'warn' }}">{{ 'Hết' if b.quantity==0 else b.quantity }}</span></td></tr>
+        {% else %}<tr><td class="muted">Không có.</td></tr>{% endfor %}
+      </table>
+    </div>
+    <div class="card">
+      <strong>Sách mới thêm</strong>
+      <table>
+        {% for b in latest %}
+        <tr><td>{{ b.title }}<div class="muted" style="font-size:12px">{{ b.author }} · {{ b.cat_name }}</div></td>
+            <td class="num">{{ b.price|vnd }}</td></tr>
+        {% else %}<tr><td class="muted">Chưa có sách.</td></tr>{% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
