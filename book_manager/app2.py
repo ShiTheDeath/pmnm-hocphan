@@ -76,7 +76,7 @@ def vnd(value):
     return f"{int(value or 0):,}".replace(",", ".") + " ₫"
 
 
-# ---------------------------------------------------------------- Dashboard
+#  Dashboard
 @app.route("/")
 def dashboard():
     db = get_db()
@@ -102,7 +102,7 @@ def dashboard():
                            low_stock=low_stock, latest=latest, max_book=max_book)
 
 
-# ------------------------------------------------------------ Categories CRUD
+#  Categories CRUD
 @app.route("/categories")
 def categories():
     q = request.args.get("q", "").strip()
@@ -148,8 +148,7 @@ def _category_form(row):
         except sqlite3.IntegrityError:
             flash("Tên danh mục đã tồn tại.", "error")
             return render_template("category_form.html", row=request.form, editing=row is not None)
-    return render_template("category_form.html", row=row or {}, editing=row is not None)
-
+    return render_template("category_form.html", row=dict(row) if row else {}, editing=row is not None)
 
 @app.route("/categories/<int:cid>/delete", methods=["POST"])
 def category_delete(cid):
@@ -160,7 +159,7 @@ def category_delete(cid):
     return redirect(url_for("categories"))
 
 
-# ------------------------------------------------------------------ Books CRUD
+#  Books CRUD
 @app.route("/books")
 def books():
     db = get_db()
@@ -224,7 +223,7 @@ def _book_form(row):
             flash("Đã cập nhật sách.", "ok")
         db.commit()
         return redirect(url_for("books", category_id=cat_id))
-    default = row or {"category_id": request.args.get("category_id", type=int)}
+    default = dict(row) if row else {"category_id": request.args.get("category_id", type=int)}
     return render_template("book_form.html", row=default, cats=cats, editing=row is not None)
 
 

@@ -1,36 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Sách{% endblock %}
+{% block title %}{{ 'Sửa' if editing else 'Thêm' }} sách{% endblock %}
 {% block content %}
-<h1>Sách{% if current %} – danh mục: {{ current.name }}{% endif %}</h1>
-<div class="card">
-  <form class="bar" method="get">
-    <select name="category_id" onchange="this.form.submit()">
-      <option value="">Tất cả danh mục</option>
-      {% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if c.id==cat_id }}>{{ c.name }}</option>{% endfor %}
+<h1>{{ 'Sửa sách' if editing else 'Thêm sách' }}</h1>
+<div class="card form">
+  <form method="post">
+    <label for="category_id">Danh mục *</label>
+    <select id="category_id" name="category_id" required>
+      {% for c in cats %}
+      <option value="{{ c.id }}" {{ 'selected' if row.get('category_id')|string == c.id|string }}>{{ c.name }}</option>
+      {% endfor %}
     </select>
-    <input name="q" value="{{ q }}" placeholder="Tìm theo tên sách / tác giả...">
-    <button class="btn sec">Tìm</button>
-    <span class="sp"></span>
-    <a class="btn" href="{{ url_for('book_new', category_id=cat_id) }}">+ Thêm sách</a>
+    <label for="title">Tên sách *</label>
+    <input id="title" name="title" required maxlength="200" value="{{ row.get('title','') }}">
+    <label for="author">Tác giả *</label>
+    <input id="author" name="author" required maxlength="100" value="{{ row.get('author','') }}">
+    <div class="row2">
+      <div><label for="price">Giá (₫)</label>
+        <input id="price" name="price" type="number" min="0" step="1000" value="{{ row.get('price', 0) }}"></div>
+      <div><label for="quantity">Số lượng</label>
+        <input id="quantity" name="quantity" type="number" min="0" value="{{ row.get('quantity', 0) }}"></div>
+    </div>
+    <label for="year">Năm xuất bản</label>
+    <input id="year" name="year" type="number" min="1000" max="2100" value="{{ row.get('year') or '' }}">
+    <div class="bar" style="margin-top:16px">
+      <button class="btn">Lưu</button>
+      <a class="btn sec" href="{{ url_for('books', category_id=row.get('category_id')) }}">Hủy</a>
+    </div>
   </form>
-  <table>
-    <tr><th>#</th><th>Tên sách</th><th>Tác giả</th><th>Danh mục</th><th class="num">Năm</th>
-        <th class="num">Giá</th><th class="num">SL</th><th class="num">Thao tác</th></tr>
-    {% for b in rows %}
-    <tr>
-      <td>{{ b.id }}</td><td><strong>{{ b.title }}</strong></td><td>{{ b.author }}</td>
-      <td><span class="badge">{{ b.cat_name }}</span></td>
-      <td class="num">{{ b.year or '' }}</td>
-      <td class="num">{{ b.price|vnd }}</td>
-      <td class="num">{% if b.quantity==0 %}<span class="badge out">Hết</span>{% elif b.quantity<=5 %}<span class="badge warn">{{ b.quantity }}</span>{% else %}{{ b.quantity }}{% endif %}</td>
-      <td class="num">
-        <a class="btn sm" href="{{ url_for('book_edit', bid=b.id) }}">Sửa</a>
-        <form class="inline" method="post" action="{{ url_for('book_delete', bid=b.id) }}"
-              onsubmit="return confirm('Xóa sách &quot;{{ b.title }}&quot;?')">
-          <button class="btn sm del">Xóa</button></form>
-      </td>
-    </tr>
-    {% else %}<tr><td colspan="8" class="muted">Không có sách nào.</td></tr>{% endfor %}
-  </table>
 </div>
 {% endblock %}
