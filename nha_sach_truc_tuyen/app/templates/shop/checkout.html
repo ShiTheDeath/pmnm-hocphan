@@ -1,0 +1,60 @@
+{% extends 'base_shop.html' %}
+{% from '_macros.html' import field %}
+{% block title %}Đặt hàng · Nhà sách Sông Hương{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm"><div class="card-body">
+      <h4 class="mb-3">Thông tin khách hàng</h4>
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        {{ field(form.full_name) }}
+        {{ field(form.phone) }}
+        {{ field(form.email) }}
+        {{ field(form.address) }}
+        <div class="mb-3">
+          {{ form.note.label(class="form-label") }}
+          {{ form.note(class="form-control", rows=2) }}
+          {% for e in form.note.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ form.payment.label(class="form-label") }} <span class="text-danger">*</span>
+          <div>
+            {% for opt in form.payment %}
+              <div class="form-check form-check-inline">
+                {{ opt(class="form-check-input") }}
+                {{ opt.label(class="form-check-label") }}
+              </div>
+            {% endfor %}
+          </div>
+          {% for e in form.payment.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+        <button class="btn btn-primary">Xác nhận đặt hàng</button>
+        <a href="{{ url_for('shop.cart_view') }}" class="btn btn-link">← Quay lại giỏ hàng</a>
+      </form>
+    </div></div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm"><div class="card-body">
+      <h5 class="mb-3">Đơn hàng của bạn</h5>
+      {% for l in lines %}
+        <div class="d-flex justify-content-between small mb-1">
+          <span>{{ l.book.title }} × {{ l.qty }}</span><span>{{ l.amount|vnd }}</span>
+        </div>
+      {% endfor %}
+      <hr>
+      <div class="d-flex justify-content-between"><span>Tạm tính</span><span>{{ subtotal|vnd }}</span></div>
+      <div class="d-flex justify-content-between">
+        <span>Phí giao hàng</span><span>{% if fee == 0 %}Miễn phí{% else %}{{ fee|vnd }}{% endif %}</span>
+      </div>
+      <div class="small text-muted">Miễn phí khi tạm tính từ {{ free_from|vnd }}</div>
+      <hr>
+      <div class="d-flex justify-content-between fs-5 fw-semibold">
+        <span>Tổng thanh toán</span><span class="price">{{ total|vnd }}</span>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

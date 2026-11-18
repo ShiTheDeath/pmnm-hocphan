@@ -1,0 +1,34 @@
+{% extends 'base_shop.html' %}
+{% block title %}Đặt hàng thành công · Nhà sách Sông Hương{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+  <div style="font-size: 3rem;">✅</div>
+  <h3>Cảm ơn bạn đã đặt hàng!</h3>
+  <p class="text-muted">Mã đơn hàng của bạn là <strong>#{{ order.id }}</strong>. Trạng thái: <strong>{{ order.status_label }}</strong>.</p>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm"><div class="card-body">
+      <h5>Thông tin nhận hàng</h5>
+      <p class="mb-1">{{ order.customer_name }} · {{ order.phone }}{% if order.email %} · {{ order.email }}{% endif %}</p>
+      <p class="mb-1">{{ order.address }}</p>
+      <p class="mb-1">Thanh toán: {{ order.payment_label }}</p>
+      {% if order.note %}<p class="mb-1">Ghi chú: {{ order.note }}</p>{% endif %}
+      <hr>
+      <table class="table table-sm mb-2">
+        <thead><tr><th>Sách</th><th class="text-end">Đơn giá</th><th class="text-end">SL</th><th class="text-end">Thành tiền</th></tr></thead>
+        <tbody>
+          {% for it in order.items %}
+          <tr><td>{{ it.book.title }}</td><td class="text-end">{{ it.unit_price|num }}</td><td class="text-end">{{ it.quantity }}</td><td class="text-end">{{ it.amount|num }}</td></tr>
+          {% endfor %}
+          <tr><td colspan="3">Phí giao hàng</td><td class="text-end">{% if order.shipping_fee == 0 %}Miễn phí{% else %}{{ order.shipping_fee|num }}{% endif %}</td></tr>
+        </tbody>
+        <tfoot><tr class="fw-semibold"><td colspan="3" class="text-end">Tổng cộng</td><td class="text-end price">{{ order.total|vnd }}</td></tr></tfoot>
+      </table>
+      <a href="{{ url_for('shop.book_list') }}" class="btn btn-primary">Tiếp tục mua sách</a>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

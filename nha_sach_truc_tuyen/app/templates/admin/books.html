@@ -1,0 +1,67 @@
+{% extends 'base_admin.html' %}
+{% from '_macros.html' import pager %}
+{% block title %}Sách{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Sách ({{ pagination.total }})</h4>
+  <a href="{{ url_for('admin.book_new') }}" class="btn btn-primary">+ Thêm sách</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-5"><input type="search" name="q" value="{{ q }}" class="form-control" placeholder="Tìm tên sách, tác giả..."></div>
+  <div class="col-md-3">
+    <select name="category" class="form-select">
+      <option value="">Mọi danh mục</option>
+      {% for c in categories %}<option value="{{ c.id }}" {{ 'selected' if cat == c.id }}>{{ c.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select name="stock" class="form-select">
+      <option value="">Tồn kho</option>
+      <option value="in" {{ 'selected' if stock == 'in' }}>Còn hàng</option>
+      <option value="low" {{ 'selected' if stock == 'low' }}>Sắp hết (≤ {{ low }})</option>
+      <option value="out" {{ 'selected' if stock == 'out' }}>Hết hàng</option>
+    </select>
+  </div>
+  <div class="col-md-2 d-grid"><button class="btn btn-outline-primary">Lọc</button></div>
+</form>
+
+<div class="bg-white rounded shadow-sm">
+  <table class="table align-middle mb-0">
+    <thead class="table-light"><tr><th>Tên sách / Tác giả</th><th>Danh mục</th><th class="text-end">Giá</th><th class="text-end">Tồn</th><th class="text-end">Thao tác</th></tr></thead>
+    <tbody>
+      {% for b in pagination.items %}
+      <tr>
+        <td><div class="fw-semibold">{{ b.title }}</div><div class="small text-muted">{{ b.author }}</div></td>
+        <td>{{ b.category.name }}</td>
+        <td class="text-end">{{ b.price|num }}</td>
+        <td class="text-end {{ 'text-danger fw-bold' if b.stock == 0 }}">{{ b.stock }}</td>
+        <td class="text-end">
+          <div class="d-inline-flex gap-1">
+            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.book_edit', book_id=b.id) }}">Sửa</a>
+            <form method="post" action="{{ url_for('admin.book_delete', book_id=b.id) }}" data-confirm="Xoá sách “{{ b.title }}”?"
+                    onsubmit="return confirm(this.dataset.confirm)">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              {% if b.has_orders %}
+                <button class="btn btn-sm btn-outline-danger" disabled style="opacity:.4" title="Sách đã có trong đơn hàng">Xoá</button>
+              {% else %}
+                <button class="btn btn-sm btn-outline-danger">Xoá</button>
+              {% endif %}
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-4">Không có sách phù hợp.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-between align-items-center p-2">
+    <span class="small text-muted">
+      {% if pagination.total %}Hiển thị {{ (pagination.page - 1) * pagination.per_page + 1 }} – {{ (pagination.page - 1) * pagination.per_page + pagination.items|length }} / {{ pagination.total }} sách{% endif %}
+    </span>
+    {{ pager(pagination, 'admin.books') }}
+  </div>
+</div>
+{% endblock %}

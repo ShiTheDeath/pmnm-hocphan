@@ -1,0 +1,51 @@
+{% extends 'base_admin.html' %}
+{% from '_macros.html' import field %}
+{% block title %}{{ 'Sửa sách' if book else 'Thêm sách' }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin.books') }}">Sách</a></li>
+    <li class="breadcrumb-item active">{{ 'Sửa' if book else 'Thêm' }}</li>
+  </ol>
+</nav>
+<h4 class="mb-3">{% if book %}Sửa sách: {{ book.title }}{% else %}Thêm sách{% endif %}</h4>
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {{ form.hidden_tag() }}
+  <div class="row g-4">
+    <div class="col-lg-8"><div class="card shadow-sm"><div class="card-body">
+      {{ field(form.title) }}
+      {{ field(form.author) }}
+      <div class="mb-3">
+        {{ form.category_id.label(class="form-label") }} <span class="text-danger">*</span>
+        {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else "")) }}
+        {% for e in form.category_id.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="row">
+        <div class="col-md-6">{{ field(form.publisher) }}</div>
+        <div class="col-md-6">{{ field(form.year) }}</div>
+        <div class="col-md-6">{{ field(form.price) }}</div>
+        <div class="col-md-6">{{ field(form.stock) }}</div>
+      </div>
+      <div class="mb-3">
+        {{ form.description.label(class="form-label") }}
+        {{ form.description(class="form-control", rows=4) }}
+      </div>
+      <button class="btn btn-primary">Lưu</button>
+      <a href="{{ url_for('admin.books') }}" class="btn btn-link">Huỷ</a>
+    </div></div></div>
+
+    <div class="col-lg-4"><div class="card shadow-sm"><div class="card-body">
+      <h6>Ảnh bìa</h6>
+      {% if book and book.cover_url %}
+        <div class="small text-muted">Ảnh hiện tại</div>
+        <img src="{{ book.cover_url }}" class="img-fluid rounded mb-2" alt="Ảnh bìa hiện tại">
+      {% endif %}
+      {{ form.cover(class="form-control" + (" is-invalid" if form.cover.errors else ""), accept=".jpg,.jpeg,.png,.webp") }}
+      {% for e in form.cover.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+      <div class="form-text">JPG, PNG, WEBP · tối đa 2 MB{% if book %}<br>Không chọn: giữ ảnh cũ{% endif %}</div>
+    </div></div></div>
+  </div>
+</form>
+{% endblock %}

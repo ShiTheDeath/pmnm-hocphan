@@ -1,0 +1,72 @@
+{% extends 'base_shop.html' %}
+{% from '_macros.html' import cover %}
+{% block title %}{{ book.title }} · Nhà sách Sông Hương{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('shop.book_list') }}">Sách</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('shop.book_list', category=book.category_id) }}">{{ book.category.name }}</a></li>
+    <li class="breadcrumb-item active">{{ book.title }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-md-4">{{ cover(book, 360) }}</div>
+  <div class="col-md-8">
+    <h2>{{ book.title }}</h2>
+    <p class="text-muted">
+      Tác giả: {{ book.author }}
+      {% if book.publisher or book.year %} · {{ book.publisher or '' }}{% if book.year %}, {{ book.year }}{% endif %}{% endif %}
+    </p>
+    <div class="fs-3 price mb-2">{{ book.price|vnd }}</div>
+    <p class="mb-1">Danh mục: <a href="{{ url_for('shop.book_list', category=book.category_id) }}">{{ book.category.name }}</a></p>
+    <p>
+      {% if book.stock > 0 %}<span class="text-success">● Còn {{ book.stock }} cuốn</span>
+      {% else %}<span class="text-danger">● Hết hàng</span>{% endif %}
+    </p>
+
+    {% if book.stock > 0 %}
+      {% if max_qty > 0 %}
+      <form method="post" action="{{ url_for('shop.cart_add', book_id=book.id) }}" class="d-flex align-items-center gap-3 mb-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <label class="mb-0">Số lượng</label>
+        <div class="input-group" style="width: 150px;">
+          <button type="button" class="btn btn-outline-secondary" id="qty-minus">−</button>
+          <input type="number" name="quantity" id="qty" value="1" min="1" max="{{ max_qty }}" class="form-control text-center">
+          <button type="button" class="btn btn-outline-secondary" id="qty-plus">+</button>
+        </div>
+        <span class="small text-muted">tối đa {{ max_qty }}{% if in_cart %} (đã có {{ in_cart }} trong giỏ){% endif %}</span>
+        <button class="btn btn-primary">🛒 Thêm vào giỏ hàng</button>
+      </form>
+      {% else %}
+        <div class="alert alert-warning">Bạn đã có {{ in_cart }} cuốn trong giỏ, bằng số hàng còn lại.</div>
+      {% endif %}
+    {% else %}
+      <button class="btn btn-light" disabled>Hết hàng</button>
+    {% endif %}
+
+    {% if book.description %}
+      <h5 class="mt-4">Mô tả</h5>
+      <p style="white-space: pre-line;">{{ book.description }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var qty = document.getElementById('qty');
+    if (!qty) return;
+    var max = parseInt(qty.max, 10);
+    document.getElementById('qty-minus').onclick = function () {
+      qty.value = Math.max(1, (parseInt(qty.value, 10) || 1) - 1);
+    };
+    document.getElementById('qty-plus').onclick = function () {
+      qty.value = Math.min(max, (parseInt(qty.value, 10) || 0) + 1);
+    };
+  })();
+</script>
+{% endblock %}

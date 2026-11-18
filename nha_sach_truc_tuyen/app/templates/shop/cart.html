@@ -1,0 +1,71 @@
+{% extends 'base_shop.html' %}
+{% from '_macros.html' import cover %}
+{% block title %}Giỏ hàng · Nhà sách Sông Hương{% endblock %}
+
+{% block content %}
+{% if not lines %}
+  <div class="text-center py-5">
+    <h4>Giỏ hàng trống</h4>
+    <a href="{{ url_for('shop.book_list') }}" class="btn btn-primary mt-2">← Tiếp tục mua sách</a>
+  </div>
+{% else %}
+  <h4 class="mb-3">Giỏ hàng ({{ lines|length }} đầu sách)</h4>
+  <div class="table-responsive bg-white rounded shadow-sm">
+    <table class="table align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Sách</th><th class="text-end">Đơn giá</th><th class="text-center">Số lượng</th><th class="text-end">Thành tiền</th><th></th></tr>
+      </thead>
+      <tbody>
+      {% for l in lines %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:48px">{{ cover(l.book, 56) }}</div>
+              <a href="{{ url_for('shop.book_detail', book_id=l.book.id) }}" class="text-decoration-none">{{ l.book.title }}</a>
+            </div>
+          </td>
+          <td class="text-end">{{ l.book.price|vnd }}</td>
+          <td class="text-center">
+            <div class="d-inline-flex align-items-center gap-2">
+              <form method="post" action="{{ url_for('shop.cart_decrease', book_id=l.book.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-secondary" aria-label="Giảm">−</button>
+              </form>
+              <span class="px-1">{{ l.qty }}</span>
+              <form method="post" action="{{ url_for('shop.cart_increase', book_id=l.book.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-secondary" aria-label="Tăng" {{ 'disabled' if l.qty >= l.book.stock }}>+</button>
+              </form>
+            </div>
+          </td>
+          <td class="text-end fw-semibold">{{ l.amount|vnd }}</td>
+          <td class="text-end">
+            <form method="post" action="{{ url_for('shop.cart_remove', book_id=l.book.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-outline-danger">✕ Xoá</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr class="table-light">
+          <td colspan="3" class="text-end fw-semibold">Tổng cộng</td>
+          <td class="text-end fs-5 price">{{ total|vnd }}</td><td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between mt-3">
+    <a href="{{ url_for('shop.book_list') }}" class="btn btn-outline-secondary">← Tiếp tục mua sách</a>
+    <div class="d-flex gap-2">
+      <form method="post" action="{{ url_for('shop.cart_clear') }}" onsubmit="return confirm('Xoá toàn bộ giỏ hàng?');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-outline-danger">Xoá giỏ hàng</button>
+      </form>
+      <a href="{{ url_for('shop.checkout') }}" class="btn btn-primary">Đặt hàng →</a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

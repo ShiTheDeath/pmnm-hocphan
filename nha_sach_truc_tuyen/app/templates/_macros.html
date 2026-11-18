@@ -1,0 +1,45 @@
+{% macro flashes() %}
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in msgs %}
+      <div class="alert alert-{{ cat if cat in ['success','danger','warning','info'] else 'info' }} alert-dismissible fade show" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+{% endmacro %}
+
+{% macro field(f, type=None) %}
+  <div class="mb-3">
+    {{ f.label(class="form-label") }}{% if f.flags.required %} <span class="text-danger">*</span>{% endif %}
+    {{ f(class="form-control" + (" is-invalid" if f.errors else "")) }}
+    {% for e in f.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro pager(p, endpoint) %}
+  {% if p.pages > 1 %}
+  <nav aria-label="Phân trang">
+    <ul class="pagination pagination-sm mb-0">
+      {% for n in range(1, p.pages + 1) %}
+        <li class="page-item {{ 'active' if n == p.page }}">
+          <a class="page-link" href="{{ url_for(endpoint, **dict(request.args.to_dict(), page=n)) }}">{{ n }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+{% endmacro %}
+
+{% macro status_badge(status, label) %}
+  {% set cls = {'pending': 'text-bg-warning', 'shipping': 'text-bg-primary', 'completed': 'text-bg-success', 'cancelled': 'text-bg-secondary'} %}
+  <span class="badge rounded-pill {{ cls.get(status, 'text-bg-light') }}">{{ label }}</span>
+{% endmacro %}
+
+{% macro cover(book, h=140) %}
+  {% if book.cover_url %}
+    <img src="{{ book.cover_url }}" alt="Ảnh bìa {{ book.title }}" class="w-100 rounded" style="height: {{ h }}px; object-fit: cover;">
+  {% else %}
+    <div class="w-100 rounded d-flex align-items-center justify-content-center text-secondary" style="height: {{ h }}px; background:#e8edf3; font-size: 2rem;">📖</div>
+  {% endif %}
+{% endmacro %}

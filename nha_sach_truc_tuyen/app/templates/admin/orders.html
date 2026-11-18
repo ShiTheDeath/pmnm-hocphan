@@ -1,0 +1,50 @@
+{% extends 'base_admin.html' %}
+{% from '_macros.html' import pager, status_badge %}
+{% block title %}Đơn hàng{% endblock %}
+
+{% block content %}
+<h4 class="mb-3">Đơn hàng</h4>
+
+<ul class="nav nav-pills mb-3">
+  <li class="nav-item">
+    <a class="nav-link {{ 'active' if not status }}" href="{{ url_for('admin.orders', q=q or None) }}">Tất cả ({{ counts_all }})</a>
+  </li>
+  {% for key, label in STATUS_LABELS.items() %}
+  <li class="nav-item">
+    <a class="nav-link {{ 'active' if status == key }}" href="{{ url_for('admin.orders', status=key, q=q or None) }}">{{ label }} ({{ counts.get(key, 0) }})</a>
+  </li>
+  {% endfor %}
+</ul>
+
+<form method="get" class="row g-2 mb-3">
+  {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+  <div class="col-md-9"><input type="search" name="q" value="{{ q }}" class="form-control" placeholder="Mã đơn, tên khách hàng, số điện thoại..."></div>
+  <div class="col-md-3 d-grid"><button class="btn btn-outline-primary">Tìm</button></div>
+</form>
+
+<div class="bg-white rounded shadow-sm">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr><th>Mã</th><th>Ngày đặt</th><th>Khách hàng</th><th>Điện thoại</th><th class="text-end">Tổng tiền</th><th>Trạng thái</th></tr>
+    </thead>
+    <tbody>
+      {% for o in pagination.items %}
+      <tr data-href="{{ url_for('admin.order_detail', order_id=o.id) }}"style="cursor:pointer"onclick="location.href=this.dataset.href">
+        <td>#{{ o.id }}</td><td>{{ o.created_at|dt('%d/%m/%Y') }}</td><td>{{ o.customer_name }}</td>
+        <td>{{ o.phone }}</td><td class="text-end">{{ o.total|vnd }}</td>
+        <td>{{ status_badge(o.status, o.status_label) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center text-muted py-4">Không có đơn hàng phù hợp.</td></tr>
+      {% endfor %}
+    </tbody>
+    <tfoot class="table-light">
+      <tr><td colspan="6" class="small">{{ n_orders }} đơn · tổng giá trị <strong>{{ sum_total|vnd }}</strong></td></tr>
+    </tfoot>
+  </table>
+  <div class="d-flex justify-content-between align-items-center p-2">
+    <span class="small text-muted">Bấm vào một dòng để xem chi tiết đơn hàng</span>
+    {{ pager(pagination, 'admin.orders') }}
+  </div>
+</div>
+{% endblock %}
